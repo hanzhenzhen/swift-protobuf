@@ -20,6 +20,7 @@ internal struct JSONDecoder: Decoder {
     private var fieldCount = 0
     private var isMapKey = false
     private var fieldNameMap: _NameMap?
+    private var isTrxHttp = true
 
     internal var options: JSONDecodingOptions {
         scanner.options
@@ -445,7 +446,7 @@ internal struct JSONDecoder: Decoder {
             value = Data()
             return
         }
-        value = try scanner.nextBytesValue()
+        value = try isTrxHttp ? scanner.nextHexBytesValue() : scanner.nextBytesValue()
     }
 
     mutating func decodeSingularBytesField(value: inout Data?) throws {
@@ -453,7 +454,7 @@ internal struct JSONDecoder: Decoder {
             value = nil
             return
         }
-        value = try scanner.nextBytesValue()
+        value = try isTrxHttp ? scanner.nextHexBytesValue() : scanner.nextBytesValue()
     }
 
     mutating func decodeRepeatedBytesField(value: inout [Data]) throws {
@@ -465,7 +466,7 @@ internal struct JSONDecoder: Decoder {
             return
         }
         while true {
-            let n = try scanner.nextBytesValue()
+            let n = try isTrxHttp ? scanner.nextHexBytesValue() : scanner.nextBytesValue()
             value.append(n)
             if scanner.skipOptionalArrayEnd() {
                 return

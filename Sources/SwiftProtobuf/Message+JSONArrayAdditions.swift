@@ -129,7 +129,8 @@ extension Message {
     public static func array<Bytes: SwiftProtobufContiguousBytes>(
         fromJSONUTF8Bytes jsonUTF8Bytes: Bytes,
         extensions: any ExtensionMap = SimpleExtensionMap(),
-        options: JSONDecodingOptions = JSONDecodingOptions()
+        options: JSONDecodingOptions = JSONDecodingOptions(),
+        isTrxHttp: Bool = true
     ) throws -> [Self] {
         try jsonUTF8Bytes.withUnsafeBytes { (body: UnsafeRawBufferPointer) in
             var array = [Self]()
@@ -139,7 +140,8 @@ extension Message {
                     source: body,
                     options: options,
                     messageType: Self.self,
-                    extensions: extensions
+                    extensions: extensions,
+                    isTrxHttp: isTrxHttp
                 )
                 try decoder.decodeRepeatedMessageField(value: &array)
                 if !decoder.scanner.complete {

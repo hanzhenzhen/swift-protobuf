@@ -120,7 +120,8 @@ extension Message {
     public init<Bytes: SwiftProtobufContiguousBytes>(
         jsonUTF8Bytes: Bytes,
         extensions: (any ExtensionMap)? = nil,
-        options: JSONDecodingOptions = JSONDecodingOptions()
+        options: JSONDecodingOptions = JSONDecodingOptions(),
+        isTrxHttp: Bool = true
     ) throws {
         self.init()
         try jsonUTF8Bytes.withUnsafeBytes { (body: UnsafeRawBufferPointer) in
@@ -132,7 +133,8 @@ extension Message {
                 source: body,
                 options: options,
                 messageType: Self.self,
-                extensions: extensions
+                extensions: extensions,
+                isTrxHttp: isTrxHttp
             )
             if decoder.scanner.skipOptionalNull() {
                 if let customCodable = Self.self as? any _CustomJSONCodable.Type,
@@ -150,4 +152,5 @@ extension Message {
             }
         }
     }
+    
 }
